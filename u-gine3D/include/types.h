@@ -19,4 +19,12 @@ typedef unsigned long long uint64;
 #include <algorithm>
 #include <cstddef>
 
+typedef glm::vec2 vec2;
+typedef glm::vec3 vec3;
+typedef glm::vec4 vec4;
+typedef glm::mat4 mat4;
+typedef glm::quat quat;
+
+#define RENDER  Renderer::Instance()
+
 #endif // UGINE_TYPES_H

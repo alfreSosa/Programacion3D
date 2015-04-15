@@ -13,6 +13,7 @@ int main() {
 		Screen::Instance()->Refresh();
 		Screen::Instance()->SetTitle(Renderer::Instance()->GetProgramError());
 	}
+  
 
 	return 0;
 }

@@ -13,93 +13,99 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\u-gine">
+      <UniqueIdentifier>{c01ad79c-90c9-47d4-b01d-e7a2dd4d3f22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\u-gine">
+      <UniqueIdentifier>{27b41779-41db-405a-92f9-0f7fd66a44c1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\array.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\entity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\renderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\resourcemanager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\screen.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\smartptr.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\string.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\submesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\types.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\u-gine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\types.h">
+      <Filter>Header Files\u-gine</Filter>
+    </ClInclude>
     <ClInclude Include="..\include\vertex.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\u-gine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\array.h">
+      <Filter>Header Files\u-gine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\camera.h">
+      <Filter>Header Files\u-gine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\entity.h">
+      <Filter>Header Files\u-gine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\mesh.h">
+      <Filter>Header Files\u-gine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\model.h">
+      <Filter>Header Files\u-gine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\renderer.h">
+      <Filter>Header Files\u-gine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\resourcemanager.h">
+      <Filter>Header Files\u-gine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\scene.h">
+      <Filter>Header Files\u-gine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\screen.h">
+      <Filter>Header Files\u-gine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\smartptr.h">
+      <Filter>Header Files\u-gine</Filter>
     </ClInclude>
     <ClInclude Include="..\lib\stb_image.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\u-gine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\string.h">
+      <Filter>Header Files\u-gine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\submesh.h">
+      <Filter>Header Files\u-gine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\texture.h">
+      <Filter>Header Files\u-gine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\entity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\mesh.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\u-gine</Filter>
     </ClCompile>
     <ClCompile Include="..\src\model.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\u-gine</Filter>
     </ClCompile>
     <ClCompile Include="..\src\renderer.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\u-gine</Filter>
     </ClCompile>
     <ClCompile Include="..\src\resourcemanager.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\u-gine</Filter>
     </ClCompile>
     <ClCompile Include="..\src\scene.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\u-gine</Filter>
     </ClCompile>
     <ClCompile Include="..\src\screen.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\u-gine</Filter>
     </ClCompile>
     <ClCompile Include="..\src\submesh.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\u-gine</Filter>
     </ClCompile>
     <ClCompile Include="..\src\texture.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\u-gine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\entity.cpp">
+      <Filter>Source Files\u-gine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\camera.cpp">
+      <Filter>Source Files\u-gine</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -10,12 +10,12 @@ public:
 	static Ptr<Texture> Create(const String& filename);
 	
 	const String& GetFilename() const;
-	uint32 GetHandle() const;
-	uint32 GetWidth() const;
-	uint32 GetHeight() const;
+  uint32 GetHandle() const { return mHandle; }
+  uint32 GetWidth() const { return mWidth; }
+  uint32 GetHeight() const { return mHeight; }
 protected:
 	Texture(const String& filename);
-	~Texture();
+  ~Texture() { }
 private:
 	String mFilename;
 	uint32 mHandle;
