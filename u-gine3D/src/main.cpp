@@ -3,8 +3,12 @@
 #define FULLSCREEN false
 
 int main() {
-	if ( FULLSCREEN )	Screen::Instance()->Open(Screen::Instance()->GetDesktopWidth(), Screen::Instance()->GetDesktopHeight(), true);
-	else				Screen::Instance()->Open(800, 600, false);
+	if ( FULLSCREEN )
+    Screen::Instance()->Open(Screen::Instance()->GetDesktopWidth(), Screen::Instance()->GetDesktopHeight(), true);
+	else			
+    Screen::Instance()->Open(800, 600, false);
+
+  Ptr<Mesh> caja = ResourceManager::Instance()->LoadMesh("data/box.msh");
 
 	while ( !Screen::Instance()->ShouldClose() && !Screen::Instance()->IsKeyPressed(GLFW_KEY_ESCAPE) ) {
 		Scene::Instance()->Update(Screen::Instance()->GetElapsed());

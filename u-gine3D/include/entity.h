@@ -7,26 +7,26 @@ class Entity {
 public:
 	static Ptr<Entity> Create();
 
-	const glm::vec3& GetPosition() const;
-	glm::vec3& GetPosition();
+  const vec3& GetPosition() const { return mPosition; }
+  vec3& GetPosition() { return mPosition; }
 
-	const glm::quat& GetRotation() const;
-	glm::quat& GetRotation();
+  const quat& GetRotation() const { return mRotation; }
+  quat& GetRotation() { return mRotation; }
 
-	const glm::vec3& GetScale() const;
-	glm::vec3& GetScale();
+  const vec3& GetScale() const { return mScale; }
+  vec3& GetScale() { return mScale; }
 
-	void Move(const glm::vec3& speed);
+  void Move(const vec3& speed) { mPosition += mRotation * speed; } //Revisar
 
 	virtual void Update(float elapsed) {}
 	virtual void Render();
 protected:
-	Entity();
+  Entity() { }
 	virtual ~Entity() {}
 private:
-	glm::vec3 mPosition;
-	glm::quat mRotation;
-	glm::vec3 mScale;
+	vec3 mPosition;
+	quat mRotation;
+	vec3 mScale;
 friend class Ptr<Entity>;
 friend class Ptr<const Entity>;
 };
