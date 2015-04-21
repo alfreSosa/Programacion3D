@@ -1,6 +1,12 @@
 #include "../include/camera.h"
 #include "../include/renderer.h"
 
+
+Ptr<Camera> Camera::Create()
+{
+  return new Camera();
+}
+
 void Camera::Prepare()
 {
   //calulamos matriz vista

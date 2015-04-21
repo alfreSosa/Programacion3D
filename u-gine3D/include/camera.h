@@ -30,7 +30,7 @@ public:
 	void Prepare();
 	virtual void Render() {}
 protected:
-	Camera();
+  Camera() { }
 	virtual ~Camera() {}
 private:
 	mat4 mProjMatrix;

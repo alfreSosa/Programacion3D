@@ -9,6 +9,9 @@ int main() {
     Screen::Instance()->Open(800, 600, false);
 
   Ptr<Mesh> caja = ResourceManager::Instance()->LoadMesh("data/box.msh");
+  Ptr<Camera> mainCamera = Camera::Create();
+
+  Scene::Instance()->AddEntity(mainCamera.UpCast<Entity>());
 
 	while ( !Screen::Instance()->ShouldClose() && !Screen::Instance()->IsKeyPressed(GLFW_KEY_ESCAPE) ) {
 		Scene::Instance()->Update(Screen::Instance()->GetElapsed());

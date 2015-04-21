@@ -43,7 +43,7 @@ Ptr<Mesh> Mesh::Create(const String& filename)
           const Value& indices = submeshes[i]["indices"];
           SizeType numInd = indices.Size();
           for (SizeType j = 0; j < numInd; j += 3)
-            submesh->AddTriangle(indices[j].GetInt(), indices["indices"][j + 1].GetInt(), indices[j + 2].GetInt());
+            submesh->AddTriangle(indices[j].GetInt(), indices[j + 1].GetInt(), indices[j + 2].GetInt());
         }
       if (submeshes[i].HasMember("coords") && submeshes[i].HasMember("texcoords"))
         if (submeshes[i]["coords"].IsArray() && submeshes[i]["texcoords"].IsArray()){
