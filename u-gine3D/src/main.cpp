@@ -10,16 +10,16 @@ int main() {
 
   Ptr<Mesh> caja = ResourceManager::Instance()->LoadMesh("data/box.msh");
   Ptr<Model> cubo = Model::Create(caja);
-  cubo->GetPosition() = vec3(2,2,2);
-  cubo->GetScale() = vec3(1, 1, 1);
+  cubo->GetPosition() = vec3(0,0,0);
+  //cubo->GetScale() = vec3(1, 1, 1);
   Scene::Instance()->AddEntity(cubo.UpCast<Entity>());
 
   Ptr<Camera> mainCamera = Camera::Create();
- /* mainCamera->SetUsesTarget(true);
-  mainCamera->GetTarget() = cubo->GetPosition();*/
-  mainCamera->GetPosition() = vec3(0, 0, 0); 
-  mainCamera->SetColor(vec3(1, 1, 1));
-  mainCamera->SetProjection(glm::perspective<float>(60, (float)Screen::Instance()->GetWidth() / Screen::Instance()->GetHeight(), 0.1, 1000));
+  mainCamera->SetUsesTarget(true);
+  mainCamera->GetTarget() = cubo->GetPosition();
+  mainCamera->GetPosition() = vec3(1, 1, 1); 
+  mainCamera->SetColor(vec3(1, 0, 1));
+  mainCamera->SetProjection(glm::perspective<float>(1.7f, (float)Screen::Instance()->GetWidth() / Screen::Instance()->GetHeight(), 0.2, 100));
   mainCamera->SetViewport(0, 0, Screen::Instance()->GetWidth(), Screen::Instance()->GetHeight());
 
   Scene::Instance()->AddEntity(mainCamera.UpCast<Entity>());
