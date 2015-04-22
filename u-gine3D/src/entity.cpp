@@ -5,16 +5,9 @@
 
 Entity::Entity()
 {
-  mPosition.x = 0;
-  mPosition.y = 0;
-  mPosition.z = 0;
-  mRotation.w = 1;
-  mRotation.x = 0;
-  mRotation.y = 0;
-  mRotation.z = 0;
-  mScale.x = 1;
-  mScale.y = 1;
-  mScale.z = 1;
+  mPosition = vec3(0, 0, 0);
+  mRotation = quat(1, 0, 0, 0);
+  mScale = vec3(1, 1, 1);
 }
 Ptr<Entity> Entity::Create()
 {
