@@ -30,8 +30,8 @@ void Submesh::Rebuild()
   uint32 indexSize = mIndices.Size() * sizeof(uint16);
   uint32 vertexSize = mVertices.Size() * sizeof(Vertex);
 
-  RENDER->SetIndexBufferData(mIndexBuffer, &mIndices, indexSize);
-  RENDER->SetVertexBufferData(mVertexBuffer, &mVertices, vertexSize);
+  RENDER->SetVertexBufferData(mVertexBuffer, &mVertices[0], vertexSize);
+  RENDER->SetIndexBufferData(mIndexBuffer, &mIndices[0], indexSize);
 }
 
 void Submesh::Render()

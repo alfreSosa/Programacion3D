@@ -9,7 +9,7 @@ class Texture {
 public:
 	static Ptr<Texture> Create(const String& filename);
 	
-	const String& GetFilename() const;
+  const String& GetFilename() const { return mFilename;}
   uint32 GetHandle() const { return mHandle; }
   uint32 GetWidth() const { return mWidth; }
   uint32 GetHeight() const { return mHeight; }

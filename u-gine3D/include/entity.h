@@ -21,7 +21,7 @@ public:
 	virtual void Update(float elapsed) {}
 	virtual void Render();
 protected:
-  Entity() { }
+  Entity();
 	virtual ~Entity() {}
 private:
 	vec3 mPosition;
