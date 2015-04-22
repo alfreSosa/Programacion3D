@@ -9,7 +9,7 @@ class Model : public Entity {
 public:
 	static Ptr<Model> Create(Ptr<Mesh> mesh);
 
-	virtual void Update(float elapsed) {}
+  virtual void Update(float elapsed);
 	virtual void Render();
 protected:
 	Model(Ptr<Mesh> mesh);

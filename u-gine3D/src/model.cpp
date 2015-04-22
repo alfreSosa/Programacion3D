@@ -12,6 +12,10 @@ Model::Model(Ptr<Mesh> mesh)
 {
   mMesh = mesh;
 }
+void Model::Update(float elapsed)
+{
+
+}
 
 void Model::Render()
 {

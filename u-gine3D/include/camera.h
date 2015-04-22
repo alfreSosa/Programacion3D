@@ -28,7 +28,7 @@ public:
   vec3& GetTarget() { return mTarget; }
 
 	void Prepare();
-	virtual void Render() {}
+  virtual void Render() { }
 protected:
   Camera() { }
 	virtual ~Camera() {}
