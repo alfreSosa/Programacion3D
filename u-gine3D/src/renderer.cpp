@@ -131,14 +131,16 @@ void Renderer::SetMVP(const mat4& mvp)
 }
 uint32 Renderer::CreateProgram(const String& vertex, const String& fragment) {
   //leo ficheros
-  const char *vertexCode = String::Read(vertex).ToCString();
-  const char *fragmentCode = String::Read(fragment).ToCString();
+  String vertexCode = String::Read(vertex);
+  String fragmentCode = String::Read(fragment);
+  const char *strVertexCode = vertexCode.ToCString();
+  const char *strFragmentCode = fragmentCode.ToCString();
   //crear shaders
   GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
   GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
   //pasar codigo
-  glShaderSource(vertexShader, 1, &vertexCode, NULL);
-  glShaderSource(fragmentShader, 1, &fragmentCode, NULL);
+  glShaderSource(vertexShader, 1, &strVertexCode, NULL);
+  glShaderSource(fragmentShader, 1, &strFragmentCode, NULL);
   //Compilamos Shaders
   GLint retCode;
   char errorLog[1024];
