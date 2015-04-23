@@ -8,6 +8,7 @@ int main() {
 	else			
     Screen::Instance()->Open(800, 600, false);
 
+  double angle = 0;
   Ptr<Mesh> caja = ResourceManager::Instance()->LoadMesh("data/box.msh");
   Ptr<Model> cubo = Model::Create(caja);
   cubo->GetPosition() = vec3(0, 0, 0);
@@ -25,6 +26,9 @@ int main() {
 
 	while ( !Screen::Instance()->ShouldClose() && !Screen::Instance()->IsKeyPressed(GLFW_KEY_ESCAPE) ) {
     
+    angle += 5 * Screen::Instance()->GetElapsed();
+    cubo->GetRotation() = glm::angleAxis<float>(angle, vec3(0, 1, 0));
+
 		Scene::Instance()->Update(Screen::Instance()->GetElapsed());
 		Scene::Instance()->Render();
 

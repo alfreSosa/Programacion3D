@@ -6,7 +6,7 @@
 Entity::Entity()
 {
   mPosition = vec3(0, 0, 0);
-  mRotation = quat(1, 0, 0, 0);
+  mRotation = quat(1, 0, 0, 0); // lo hace automaticamente pero mejor asi
   mScale = vec3(1, 1, 1);
 }
 Ptr<Entity> Entity::Create()

@@ -31,6 +31,7 @@ public:
 	void DrawBuffers(uint32 vertexBuffer, uint32 indexBuffer, uint32 numIndices);
 
 	// Shaders
+  void SetMVP(const mat4& mvp);
 	uint32 CreateProgram(const String& vertex, const String& fragment);
 	void FreeProgram(uint32 program);
 	void UseProgram(uint32 program);

@@ -7,6 +7,8 @@
 Ptr<Renderer> Renderer::mInstance = nullptr;
 
 Renderer::Renderer() {
+  mDefaultProgram = CreateProgram("data/vertex.glsl", "data/fragment.glsl");
+  UseProgram(mDefaultProgram);
 }
 
 void Renderer::Setup3D() {
@@ -103,7 +105,17 @@ void Renderer::SetIndexBufferData(uint32 indexBuffer, const void* data, uint32 d
 }
 
 void Renderer::DrawBuffers(uint32 vertexBuffer, uint32 indexBuffer, uint32 numIndices) {
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+  glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+  glEnableVertexAttribArray(mVPosLoc);
+  glEnableVertexAttribArray(mVTexLoc);
+  glVertexAttribPointer(mVPosLoc, 3, GL_FLOAT, false, 3 * sizeof(float), NULL);
+  glVertexAttribPointer(mTexSamplerLoc, 2, GL_FLOAT, true, 2 * sizeof(float), NULL);
+  glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, 0);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  
+  /*glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -111,17 +123,76 @@ void Renderer::DrawBuffers(uint32 vertexBuffer, uint32 indexBuffer, uint32 numIn
 	glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), (const void*)offsetof(Vertex, mTexCoords));
 	glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);*/
 }
-
+void Renderer::SetMVP(const mat4& mvp)
+{
+  glUniformMatrix4fv(mMVPLoc, 1, false, glm::value_ptr(mvp));
+}
 uint32 Renderer::CreateProgram(const String& vertex, const String& fragment) {
-	return 0;
+  //leo ficheros
+  const char *vertexCode = String::Read(vertex).ToCString();
+  const char *fragmentCode = String::Read(fragment).ToCString();
+  //crear shaders
+  GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+  GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+  //pasar codigo
+  glShaderSource(vertexShader, 1, &vertexCode, NULL);
+  glShaderSource(fragmentShader, 1, &fragmentCode, NULL);
+  //Compilamos Shaders
+  GLint retCode;
+  char errorLog[1024];
+  glCompileShader(vertexShader);
+  glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &retCode);
+  if (retCode == GL_FALSE){
+    glDeleteShader(vertexShader);
+    glGetShaderInfoLog(vertexShader, sizeof(errorLog), NULL, errorLog);
+    mProgramError = errorLog;
+    return 0;
+  }
+  glCompileShader(fragmentShader);
+  glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &retCode);
+  if (retCode == GL_FALSE){
+    glGetShaderInfoLog(fragmentShader, sizeof(errorLog), NULL, errorLog);
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+    mProgramError = errorLog;
+    return 0;
+  }
+
+  GLuint program = glCreateProgram();
+  glAttachShader(program, vertexShader);
+  glAttachShader(program, fragmentShader);
+  glLinkProgram(program);
+  glGetProgramiv(program, GL_LINK_STATUS, &retCode);
+  if (retCode == GL_FALSE){
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+    glDeleteProgram(program);
+    glGetProgramInfoLog(program, sizeof(errorLog), NULL, errorLog);
+    mProgramError = errorLog;
+    return 0;
+  }
+
+	return program;
 }
 
 void Renderer::FreeProgram(uint32 program) {
+  glDeleteProgram(program);
 }
 
 void Renderer::UseProgram(uint32 program) {
+  if (program == 0){
+    glUseProgram(mDefaultProgram);
+  }
+  else{
+    glUseProgram(program);
+    mMVPLoc = glGetUniformLocation(program, "MVP");
+    mTexSamplerLoc = glGetUniformLocation(program, "texSampler");
+    glUniform1i(mTexSamplerLoc, 0);
+    mVPosLoc = glGetAttribLocation(program, "vpos");
+    mVTexLoc = glGetAttribLocation(program, "vtex");
+  }
 }
 
 const String& Renderer::GetProgramError() {
