@@ -19,10 +19,8 @@ void Renderer::Setup3D() {
 }
 
 void Renderer::SetMatrices(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection) {
-	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(glm::value_ptr(projection));
-	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixf(glm::value_ptr(view * model));
+  mat4 mvp = projection * view * model;
+  glUniformMatrix4fv(mMVPLoc, 1, false, glm::value_ptr(mvp));
 }
 
 void Renderer::SetViewport(int x, int y, int w, int h) {
@@ -109,8 +107,8 @@ void Renderer::DrawBuffers(uint32 vertexBuffer, uint32 indexBuffer, uint32 numIn
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
   glEnableVertexAttribArray(mVPosLoc);
   glEnableVertexAttribArray(mVTexLoc);
-  glVertexAttribPointer(mVPosLoc, 3, GL_FLOAT, false, 3 * sizeof(float), NULL);
-  glVertexAttribPointer(mTexSamplerLoc, 2, GL_FLOAT, true, 2 * sizeof(float), NULL);
+  glVertexAttribPointer(mVPosLoc, 3, GL_FLOAT, false, sizeof(Vertex), ((void*)(0)));
+  glVertexAttribPointer(mTexSamplerLoc, 2, GL_FLOAT, true, sizeof(Vertex), ((void*)(sizeof(vec3))));
   glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, 0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -125,10 +123,7 @@ void Renderer::DrawBuffers(uint32 vertexBuffer, uint32 indexBuffer, uint32 numIn
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);*/
 }
-void Renderer::SetMVP(const mat4& mvp)
-{
-  glUniformMatrix4fv(mMVPLoc, 1, false, glm::value_ptr(mvp));
-}
+
 uint32 Renderer::CreateProgram(const String& vertex, const String& fragment) {
   //leo ficheros
   String vertexCode = String::Read(vertex);
