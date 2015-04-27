@@ -107,8 +107,8 @@ void Renderer::DrawBuffers(uint32 vertexBuffer, uint32 indexBuffer, uint32 numIn
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
   glEnableVertexAttribArray(mVPosLoc);
   glEnableVertexAttribArray(mVTexLoc);
-  glVertexAttribPointer(mVPosLoc, 3, GL_FLOAT, false, sizeof(Vertex), ((void*)(0)));
-  glVertexAttribPointer(mTexSamplerLoc, 2, GL_FLOAT, true, sizeof(Vertex), ((void*)(sizeof(vec3))));
+  glVertexAttribPointer(mVPosLoc, 3, GL_FLOAT, false, sizeof(Vertex), (const void *)offsetof(Vertex, mPosition));
+  glVertexAttribPointer(mTexSamplerLoc, 2, GL_FLOAT, true, sizeof(Vertex), (const void *)offsetof(Vertex, mTexCoords));
   glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, 0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
