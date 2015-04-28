@@ -20,7 +20,12 @@ void Renderer::Setup3D() {
 
 void Renderer::SetMatrices(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection) {
   mat4 mvp = projection * view * model;
+  mat4 mv = view * model;
+  mat4 normal = glm::transpose(glm::inverse(mv));
+
   glUniformMatrix4fv(mMVPLoc, 1, false, glm::value_ptr(mvp));
+  glUniformMatrix4fv(mMVLoc, 1, false, glm::value_ptr(mv));
+  glUniformMatrix4fv(mNormalLoc, 1, false, glm::value_ptr(normal));
 }
 
 void Renderer::SetViewport(int x, int y, int w, int h) {
@@ -112,16 +117,6 @@ void Renderer::DrawBuffers(uint32 vertexBuffer, uint32 indexBuffer, uint32 numIn
   glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, 0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-  
-  /*glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(Vertex), (const void*)offsetof(Vertex, mPosition));
-	glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), (const void*)offsetof(Vertex, mTexCoords));
-	glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, 0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);*/
 }
 
 uint32 Renderer::CreateProgram(const String& vertex, const String& fragment) {
@@ -183,13 +178,16 @@ void Renderer::UseProgram(uint32 program) {
     glUseProgram(mDefaultProgram);
   }
   else{
-    glUseProgram(program);
-    mMVPLoc = glGetUniformLocation(program, "MVP");
-    mTexSamplerLoc = glGetUniformLocation(program, "texSampler");
-    glUniform1i(mTexSamplerLoc, 0);
-    mVPosLoc = glGetAttribLocation(program, "vpos");
-    mVTexLoc = glGetAttribLocation(program, "vtex");
+	glUseProgram(program);
   }
+	mMVPLoc = glGetUniformLocation(program, "MVP");
+	mMVLoc = glGetUniformLocation(program, "MV"); //nombre de las variables en el shader
+	mNormalLoc = glGetUniformLocation(program, "NORMAL");
+	mTexSamplerLoc = glGetUniformLocation(program, "texSampler");
+	glUniform1i(mTexSamplerLoc, 0);
+	mVPosLoc = glGetAttribLocation(program, "vpos");
+	mVTexLoc = glGetAttribLocation(program, "vtex");
+  
 }
 
 const String& Renderer::GetProgramError() {

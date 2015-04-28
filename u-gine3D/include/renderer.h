@@ -6,6 +6,7 @@
 #include "types.h"
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
+#define MAX_LIGHTS 8
 
 class Renderer {
 public:
@@ -37,12 +38,22 @@ public:
 	void FreeProgram(uint32 program);
 	void UseProgram(uint32 program);
 	const String& GetProgramError();
+
+	//Lightning
+	void SetDiffuse(const glm::vec3& color);
+	void SetAmbient(const glm::vec3& color);
+	void SetShininess(uint8 shininess);
+	void EnableLighting(bool enable);
+	void EnableLight(uint32 index, bool enabled);
+	void SetLightData(uint32 index, const glm::vec4& vector, const glm::vec3& color, float attenuation);
 protected:
 	Renderer();
 	virtual ~Renderer() {}
 private:
 	static Ptr<Renderer> mInstance;
 	int mMVPLoc;
+	int mMVLoc;
+	int mNormalLoc;
 	int mTexSamplerLoc;
 	int mVPosLoc;
 	int mVTexLoc;
