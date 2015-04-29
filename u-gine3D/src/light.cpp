@@ -1,4 +1,6 @@
 #include "../include/light.h"
+#include "../include/scene.h"
+#include "../include/camera.h"
 
 bool Light::lightsUsed[] = { false };
 
@@ -29,10 +31,12 @@ Light::~Light()
 void Light::Prepare()
 {
 	RENDER->EnableLight(mIndex, true);
-	vec4 pos = vec4(0,0,0,0);
+
+	vec4 pos;
 	pos.x = GetPosition().x;
 	pos.y = GetPosition().y;
 	pos.z = GetPosition().z;
+
 	switch (mType)
 	{
 	case DIRECTIONAL:
@@ -43,5 +47,5 @@ void Light::Prepare()
 		break;
 	}
 		
-	RENDER->SetLightData(mIndex, pos, mColor, mAttenuation);
+	RENDER->SetLightData(mIndex, Scene::Instance()->GetCurrentCamera()->GetView() * pos, mColor, mAttenuation);
 }

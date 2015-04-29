@@ -192,7 +192,7 @@ void Renderer::UseProgram(uint32 program) {
 	mLightingEnabledLoc = glGetAttribLocation(program, "lightingEnabled");
 
 	for (uint32 i = 0; i < MAX_LIGHTS; i++){
-		String enabled = String("lightingEnabled[") + String::FromInt(i) + String("]");
+		String enabled = String("lightEnabled[") + String::FromInt(i) + String("]");
 		String pos = String("lightPos[") + String::FromInt(i) + String("]");
 		String color = String("lightColor[") + String::FromInt(i) + String("]");
 		String att = String("lightAtt[") + String::FromInt(i) + String("]");
