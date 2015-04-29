@@ -12,6 +12,8 @@ Submesh::Submesh(Ptr<Texture> tex)
   mVertexBuffer = RENDER->CreateBuffer();
   mIndexBuffer = RENDER->CreateBuffer();
   SetTexture(tex);
+  mColor = vec3(0, 0, 0);
+  mShininess = 0;
 }
 
 Submesh::~Submesh()
@@ -41,5 +43,7 @@ void Submesh::Render()
   else
     RENDER->SetTexture(0);
 
+  RENDER->SetDiffuse(mColor);
+  RENDER->SetShininess(mShininess);
   RENDER->DrawBuffers(mVertexBuffer, mIndexBuffer, mIndices.Size());
 }

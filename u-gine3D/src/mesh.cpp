@@ -39,6 +39,18 @@ Ptr<Mesh> Mesh::Create(const String& filename)
         Ptr<Texture> tex = Texture::Create(strTexture);
         submesh->SetTexture(tex);
       }
+
+      if (submeshes[i].HasMember("color"))
+        if (submeshes[i]["color"].IsArray()){
+          int indice = 0;
+          vec3 colour(submeshes[i]["color"][indice].GetDouble(), submeshes[i]["color"][indice + 1].GetDouble(), submeshes[i]["color"][indice + 2].GetDouble());
+          submesh->SetColor(colour);
+        }
+      
+      if (submeshes[i].HasMember("shininess")) {
+        submesh->SetShininess(submeshes[i]["shininess"].GetInt());
+      }
+
       if (submeshes[i].HasMember("indices"))
         if (submeshes[i]["indices"].IsArray()){
           const Value& indices = submeshes[i]["indices"];
@@ -46,25 +58,44 @@ Ptr<Mesh> Mesh::Create(const String& filename)
           for (SizeType j = 0; j < numInd; j += 3)
             submesh->AddTriangle(indices[j].GetInt(), indices[j + 1].GetInt(), indices[j + 2].GetInt());
         }
-      if (submeshes[i].HasMember("coords") && submeshes[i].HasMember("texcoords"))
-        if (submeshes[i]["coords"].IsArray() && submeshes[i]["texcoords"].IsArray()){
+
+      if (submeshes[i].HasMember("coords"))
+        if (submeshes[i]["coords"].IsArray()){ 
           
           SizeType numCoords = submeshes[i]["coords"].Size();
-          SizeType numTexCoords = submeshes[i]["texcoords"].Size();
+          SizeType numTexCoords = 0;
+          SizeType numNormals = 0;
+
+          if (submeshes[i].HasMember("texcoords"))
+            if (submeshes[i]["texcoords"].IsArray())
+              numTexCoords = submeshes[i]["texcoords"].Size();
+
+          if (submeshes[i].HasMember("normals"))
+            if (submeshes[i]["normals"].IsArray())
+              numNormals = submeshes[i]["normals"].Size();
 
           for (SizeType j = 0, z = 0; j < numCoords; j += 3, z+=2)
           {
-            vec3 coord;
-            vec2 texcoord;
+            vec3 coord = vec3(0,0,0);
+            vec3 normals = vec3(0, 0, 0);
+            vec2 texcoord = vec2(0, 0);
+
             coord.x = submeshes[i]["coords"][j].GetDouble();
             coord.y = submeshes[i]["coords"][j + 1].GetDouble();
             coord.z = submeshes[i]["coords"][j + 2].GetDouble();
 
-            if (z < numTexCoords){
+            if (j < numNormals) {
+              normals.x = submeshes[i]["normals"][j].GetDouble();
+              normals.y = submeshes[i]["normals"][j + 1].GetDouble();
+              normals.z = submeshes[i]["normals"][j + 2].GetDouble();
+            }
+
+            if (z < numTexCoords) {
               texcoord.x = submeshes[i]["texcoords"][z].GetDouble();
               texcoord.y = submeshes[i]["texcoords"][z + 1].GetDouble();
             }
-            Vertex vertice(coord, texcoord);
+
+            Vertex vertice(coord, texcoord, normals);
             submesh->AddVertex(vertice);
           }
          

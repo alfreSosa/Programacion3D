@@ -18,7 +18,7 @@ void Practica1()
 		Screen::Instance()->Open(800, 600, false);
 
 	double angle = 0;
-	Ptr<Mesh> caja = ResourceManager::Instance()->LoadMesh("data/box.msh");
+	Ptr<Mesh> caja = ResourceManager::Instance()->LoadMesh("data/teapot.msh");
 	Ptr<Model> cubo = Model::Create(caja);
 	cubo->GetPosition() = vec3(0, 0, 0);
 	Scene::Instance()->AddEntity(cubo.UpCast<Entity>());

@@ -7,6 +7,10 @@
 Ptr<Renderer> Renderer::mInstance = nullptr;
 
 Renderer::Renderer() {
+  mDiffuse = vec3(0, 0, 0);
+  mAmbient = vec3(0, 0, 0);
+  mShininess = 0;
+
   mDefaultProgram = CreateProgram("data/vertex.glsl", "data/fragment.glsl");
   UseProgram(mDefaultProgram);
 }
@@ -114,6 +118,7 @@ void Renderer::DrawBuffers(uint32 vertexBuffer, uint32 indexBuffer, uint32 numIn
   glEnableVertexAttribArray(mVTexLoc);
   glVertexAttribPointer(mVPosLoc, 3, GL_FLOAT, false, sizeof(Vertex), (const void *)offsetof(Vertex, mPosition));
   glVertexAttribPointer(mTexSamplerLoc, 2, GL_FLOAT, true, sizeof(Vertex), (const void *)offsetof(Vertex, mTexCoords));
+  glVertexAttribPointer(mVNormalLoc, 3, GL_FLOAT, true, sizeof(Vertex), (const void *)offsetof(Vertex, mNormals));
   glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, 0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -186,7 +191,8 @@ void Renderer::UseProgram(uint32 program) {
 	mTexSamplerLoc = glGetUniformLocation(program, "texSampler");
 	glUniform1i(mTexSamplerLoc, 0);
 	mVPosLoc = glGetAttribLocation(program, "vpos");
-	mVTexLoc = glGetAttribLocation(program, "vtex");
+  mVTexLoc = glGetAttribLocation(program, "vtex");
+  mVNormalLoc = glGetAttribLocation(program, "vnormal"); //comprobar cuando escriba el shader
   
 }
 

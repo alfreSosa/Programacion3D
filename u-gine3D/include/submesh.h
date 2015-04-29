@@ -19,8 +19,14 @@ public:
   const Array<Vertex>& GetVertices() const { return mVertices; }
   Array<Vertex>& GetVertices() { return mVertices; }
 
+  const glm::vec3& GetColor() const { return mColor; }
+  void SetColor(const glm::vec3& color) { mColor = color; }
+  uint8 GetShininess() const { return mShininess; }
+  void SetShininess(uint8 shininess) { mShininess = shininess; }
+
 	void Rebuild();
 	void Render();
+
 protected:
 	Submesh(Ptr<Texture> tex);
 	~Submesh();
@@ -30,6 +36,8 @@ private:
 	uint32 mIndexBuffer;
 	Array<Vertex> mVertices;
 	Array<uint16> mIndices;
+  uint8 mShininess;
+  vec3 mColor;
 friend class Ptr<Submesh>;
 friend class Ptr<const Submesh>;
 };
