@@ -10,8 +10,8 @@ class Scene {
 public:
   static Ptr<Scene> Instance(){ if (mInstance == 0) mInstance = new Scene(); return mInstance; }
 
-  Ptr<const Camera> GetCurrentCamera() const { mCurrentCamera; }
-  Ptr<Camera> GetCurrentCamera() { mCurrentCamera; }
+  Ptr<const Camera> GetCurrentCamera() const { return mCurrentCamera.ConstCast(); }
+  Ptr<Camera> GetCurrentCamera() { return mCurrentCamera; }
   const mat4& GetModel() const { return mModelMatrix; }
   void SetModel(const mat4& m);
 
