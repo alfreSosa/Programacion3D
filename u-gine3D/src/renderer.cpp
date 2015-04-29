@@ -7,10 +7,6 @@
 Ptr<Renderer> Renderer::mInstance = nullptr;
 
 Renderer::Renderer() {
-  mDiffuse = vec3(0, 0, 0);
-  mAmbient = vec3(0, 0, 0);
-  mShininess = 0;
-
   mDefaultProgram = CreateProgram("data/vertex.glsl", "data/fragment.glsl");
   UseProgram(mDefaultProgram);
 }
@@ -29,7 +25,7 @@ void Renderer::SetMatrices(const glm::mat4& model, const glm::mat4& view, const 
 
   glUniformMatrix4fv(mMVPLoc, 1, false, glm::value_ptr(mvp));
   glUniformMatrix4fv(mMVLoc, 1, false, glm::value_ptr(mv));
-  glUniformMatrix4fv(mNormalLoc, 1, false, glm::value_ptr(normal));
+  glUniformMatrix4fv(mNormalMatrixLoc, 1, false, glm::value_ptr(normal));
 }
 
 void Renderer::SetViewport(int x, int y, int w, int h) {
@@ -186,14 +182,60 @@ void Renderer::UseProgram(uint32 program) {
 	glUseProgram(program);
   }
 	mMVPLoc = glGetUniformLocation(program, "MVP");
-	mMVLoc = glGetUniformLocation(program, "MV"); //nombre de las variables en el shader
-	mNormalLoc = glGetUniformLocation(program, "NORMAL");
+	mMVLoc = glGetUniformLocation(program, "modelView"); //nombre de las variables en el shader  comprobar
+	mNormalMatrixLoc = glGetUniformLocation(program, "normalMatrix");
 	mTexSamplerLoc = glGetUniformLocation(program, "texSampler");
 	glUniform1i(mTexSamplerLoc, 0);
 	mVPosLoc = glGetAttribLocation(program, "vpos");
-  mVTexLoc = glGetAttribLocation(program, "vtex");
-  mVNormalLoc = glGetAttribLocation(program, "vnormal"); //comprobar cuando escriba el shader
-  
+	mVTexLoc = glGetAttribLocation(program, "vtex");
+	mVNormalLoc = glGetAttribLocation(program, "vnormal");
+	mLightingEnabledLoc = glGetAttribLocation(program, "lightingEnabled");
+
+	for (uint32 i = 0; i < MAX_LIGHTS; i++){
+		String enabled = String("lightingEnabled[") + String::FromInt(i) + String("]");
+		String pos = String("lightPos[") + String::FromInt(i) + String("]");
+		String color = String("lightColor[") + String::FromInt(i) + String("]");
+		String att = String("lightAtt[") + String::FromInt(i) + String("]");
+		mLightEnabledLoc[i] = glGetAttribLocation(program, enabled.ToCString());
+		mLightPosLoc[i] = glGetAttribLocation(program, pos.ToCString());
+		mLightColorLoc[i] = glGetAttribLocation(program, color.ToCString());
+		mLightAttLoc[i] = glGetAttribLocation(program, att.ToCString());
+	}
+	mVDiffuseLoc = glGetAttribLocation(program, "diffuse");
+	mVAmbientLoc = glGetAttribLocation(program, "ambient");
+	mShininessLoc = glGetAttribLocation(program, "shininess");
+}
+
+void Renderer::SetDiffuse(const glm::vec3& color) 
+{
+	glUniform3f(mVDiffuseLoc, color.r, color.g, color.b);
+}
+
+void Renderer::SetAmbient(const glm::vec3& color) 
+{
+	glUniform3f(mVAmbientLoc, color.r, color.g, color.b);
+}
+
+void Renderer::SetShininess(uint8 shininess) 
+{
+	glUniform1i(mShininessLoc, shininess);
+}
+
+void Renderer::EnableLighting(bool enable) 
+{
+	glUniform1i(mLightingEnabledLoc, enable);
+}
+
+void Renderer::EnableLight(uint32 index, bool enabled)
+{
+	glUniform1i(mLightEnabledLoc[index], enabled);
+}
+
+void Renderer::SetLightData(uint32 index, const glm::vec4& vector, const glm::vec3& color, float attenuation) 
+{
+	glUniform4f(mLightPosLoc[index], vector.x, vector.y, vector.z, vector.w);
+	glUniform3f(mLightColorLoc[index], color.r, color.g, color.b);
+	glUniform1f(mLightAttLoc[index], attenuation);
 }
 
 const String& Renderer::GetProgramError() {

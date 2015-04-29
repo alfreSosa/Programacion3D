@@ -3,6 +3,7 @@
 
 #include "array.h"
 #include "camera.h"
+#include "light.h"
 #include "entity.h"
 
 class Scene {
@@ -19,9 +20,9 @@ public:
   uint32 GetNumEntities() const { return mEntities.Size(); }
   Ptr<const Entity> GetEntity(uint32 index) const { return mEntities[index].ConstCast(); }
   Ptr<Entity> GetEntity(uint32 index) { return mEntities[index]; }
-
-	void Update(float elapsed);
-	void Render();
+  void SetAmbient(const glm::vec3& ambient) { mAmbientLight = ambient; }
+  void Update(float elapsed);
+  void Render();
 protected:
 	Scene();
 	~Scene() {}
@@ -31,6 +32,8 @@ private:
 	mat4 mModelMatrix;
 	Array<Ptr<Camera>> mCameras;
 	Array<Ptr<Entity>> mEntities;
+	Array<Ptr<Light>> mLights;
+	vec3 mAmbientLight;
 friend class Ptr<Scene>;
 friend class Ptr<const Scene>;
 };

@@ -40,9 +40,9 @@ public:
 	const String& GetProgramError();
 
 	//Lightning
-  void SetDiffuse(const glm::vec3& color) { mDiffuse = color; }
-  void SetAmbient(const glm::vec3& color) { mAmbient = color; }
-  void SetShininess(uint8 shininess) { mShininess = shininess; }
+	void SetDiffuse(const glm::vec3& color);
+	void SetAmbient(const glm::vec3& color);
+	void SetShininess(uint8 shininess);
 
   //Averiguar si guardar un array fijo de luces
 	void EnableLighting(bool enable);
@@ -56,14 +56,19 @@ private:
 	static Ptr<Renderer> mInstance;
 	int mMVPLoc;
 	int mMVLoc;
-	int mNormalLoc;
+	int mNormalMatrixLoc;
 	int mTexSamplerLoc;
 	int mVPosLoc;
-  int mVTexLoc;
-  int mVNormalLoc;
-  vec3 mDiffuse;
-  vec3 mAmbient;
-  uint8 mShininess;
+	int mVTexLoc;
+	int mVNormalLoc;
+	int mLightingEnabledLoc;
+	int mLightEnabledLoc[MAX_LIGHTS];
+	int mLightPosLoc[MAX_LIGHTS];
+	int mLightColorLoc[MAX_LIGHTS];
+	int mLightAttLoc[MAX_LIGHTS];
+	int mVDiffuseLoc;
+	int mVAmbientLoc;
+	int mShininessLoc;
 
 	uint32 mDefaultProgram;
 	String mProgramError;
