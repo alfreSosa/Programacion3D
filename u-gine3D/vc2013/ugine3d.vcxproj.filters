@@ -114,4 +114,12 @@
       <Filter>Source Files\u-gine</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\data\fragment.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\data\vertex.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>

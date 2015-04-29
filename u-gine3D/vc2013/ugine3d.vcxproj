@@ -44,6 +44,10 @@
     <ClCompile Include="..\src\submesh.cpp" />
     <ClCompile Include="..\src\texture.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\data\fragment.glsl" />
+    <None Include="..\data\vertex.glsl" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{AA205D65-795A-43B8-A03E-ACB33DB8500D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
