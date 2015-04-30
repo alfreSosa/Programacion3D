@@ -20,7 +20,7 @@ public:
   uint32 GetNumEntities() const { return mEntities.Size(); }
   Ptr<const Entity> GetEntity(uint32 index) const { return mEntities[index].ConstCast(); }
   Ptr<Entity> GetEntity(uint32 index) { return mEntities[index]; }
-  void SetAmbient(const glm::vec3& ambient) { mAmbientLight = ambient; }
+  void SetAmbient(const glm::vec3& ambient);
   void Update(float elapsed);
   void Render();
 protected:
@@ -33,7 +33,6 @@ private:
 	Array<Ptr<Camera>> mCameras;
 	Array<Ptr<Entity>> mEntities;
 	Array<Ptr<Light>> mLights;
-	vec3 mAmbientLight;
 friend class Ptr<Scene>;
 friend class Ptr<const Scene>;
 };

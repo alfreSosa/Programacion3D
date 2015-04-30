@@ -12,7 +12,7 @@ Submesh::Submesh(Ptr<Texture> tex)
   mVertexBuffer = RENDER->CreateBuffer();
   mIndexBuffer = RENDER->CreateBuffer();
   SetTexture(tex);
-  mColor = vec3(0, 0, 0);
+  mColor = vec3(1, 1, 1);
   mShininess = 0;
 }
 

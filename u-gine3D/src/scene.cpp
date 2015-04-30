@@ -61,9 +61,8 @@ void Scene::Render()
   for (uint32 i = 0; i < camLength; i++){
     mCurrentCamera = mCameras[i];
     mCameras[i]->Prepare(); 
-	for (uint32 j = 0; j < lightLength; j++){
-		mLights[j]->Prepare();
-	}
+	  for (uint32 j = 0; j < lightLength; j++)
+		  mLights[j]->Prepare();
     for (uint32 j = 0; j < length; j++)
       mEntities[j]->Render();
   }
@@ -72,4 +71,9 @@ void Scene::Render()
 	  RENDER->EnableLight(i, false);
   
 
+}
+
+void Scene::SetAmbient(const glm::vec3& ambient)
+{
+  RENDER->SetAmbient(ambient);
 }

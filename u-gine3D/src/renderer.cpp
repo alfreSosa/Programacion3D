@@ -82,7 +82,11 @@ void Renderer::FreeTexture(uint32 tex) {
 }
 
 void Renderer::SetTexture(uint32 tex) {
-	glBindTexture(GL_TEXTURE_2D, tex);
+  if (tex != 0)
+    glUniform1i(mEnabledTextureLoc, true);
+  else
+    glUniform1i(mEnabledTextureLoc, false);
+  glBindTexture(GL_TEXTURE_2D, tex);
 }
 
 uint32 Renderer::CreateBuffer() {
@@ -112,8 +116,9 @@ void Renderer::DrawBuffers(uint32 vertexBuffer, uint32 indexBuffer, uint32 numIn
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
   glEnableVertexAttribArray(mVPosLoc);
   glEnableVertexAttribArray(mVTexLoc);
+  glEnableVertexAttribArray(mVNormalLoc);
   glVertexAttribPointer(mVPosLoc, 3, GL_FLOAT, false, sizeof(Vertex), (const void *)offsetof(Vertex, mPosition));
-  glVertexAttribPointer(mTexSamplerLoc, 2, GL_FLOAT, true, sizeof(Vertex), (const void *)offsetof(Vertex, mTexCoords));
+  glVertexAttribPointer(mVTexLoc, 2, GL_FLOAT, true, sizeof(Vertex), (const void *)offsetof(Vertex, mTexCoords));
   glVertexAttribPointer(mVNormalLoc, 3, GL_FLOAT, true, sizeof(Vertex), (const void *)offsetof(Vertex, mNormals));
   glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, 0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -138,18 +143,18 @@ uint32 Renderer::CreateProgram(const String& vertex, const String& fragment) {
   glCompileShader(vertexShader);
   glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &retCode);
   if (retCode == GL_FALSE){
-    glDeleteShader(vertexShader);
     glGetShaderInfoLog(vertexShader, sizeof(errorLog), NULL, errorLog);
     mProgramError = errorLog;
+    glDeleteShader(vertexShader);
     return 0;
   }
   glCompileShader(fragmentShader);
   glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &retCode);
   if (retCode == GL_FALSE){
     glGetShaderInfoLog(fragmentShader, sizeof(errorLog), NULL, errorLog);
+    mProgramError = errorLog;
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
-    mProgramError = errorLog;
     return 0;
   }
 
@@ -158,12 +163,12 @@ uint32 Renderer::CreateProgram(const String& vertex, const String& fragment) {
   glAttachShader(program, fragmentShader);
   glLinkProgram(program);
   glGetProgramiv(program, GL_LINK_STATUS, &retCode);
-  if (retCode == GL_FALSE){
+  if (retCode == GL_FALSE){ 
+    glGetProgramInfoLog(program, sizeof(errorLog), NULL, errorLog);
+    mProgramError = errorLog;
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
     glDeleteProgram(program);
-    glGetProgramInfoLog(program, sizeof(errorLog), NULL, errorLog);
-    mProgramError = errorLog;
     return 0;
   }
 
@@ -175,12 +180,11 @@ void Renderer::FreeProgram(uint32 program) {
 }
 
 void Renderer::UseProgram(uint32 program) {
-  if (program == 0){
-    glUseProgram(mDefaultProgram);
-  }
-  else{
-	glUseProgram(program);
-  }
+  if (program == 0)
+    program = mDefaultProgram;
+
+  glUseProgram(program);
+
 	mMVPLoc = glGetUniformLocation(program, "MVP");
 	mMVLoc = glGetUniformLocation(program, "modelView"); //nombre de las variables en el shader  comprobar
 	mNormalMatrixLoc = glGetUniformLocation(program, "normalMatrix");
@@ -189,21 +193,22 @@ void Renderer::UseProgram(uint32 program) {
 	mVPosLoc = glGetAttribLocation(program, "vpos");
 	mVTexLoc = glGetAttribLocation(program, "vtex");
 	mVNormalLoc = glGetAttribLocation(program, "vnormal");
-	mLightingEnabledLoc = glGetAttribLocation(program, "lightingEnabled");
+  mLightingEnabledLoc = glGetUniformLocation(program, "lightingEnabled");
 
 	for (uint32 i = 0; i < MAX_LIGHTS; i++){
 		String enabled = String("lightEnabled[") + String::FromInt(i) + String("]");
 		String pos = String("lightPos[") + String::FromInt(i) + String("]");
 		String color = String("lightColor[") + String::FromInt(i) + String("]");
 		String att = String("lightAtt[") + String::FromInt(i) + String("]");
-		mLightEnabledLoc[i] = glGetAttribLocation(program, enabled.ToCString());
-		mLightPosLoc[i] = glGetAttribLocation(program, pos.ToCString());
-		mLightColorLoc[i] = glGetAttribLocation(program, color.ToCString());
-		mLightAttLoc[i] = glGetAttribLocation(program, att.ToCString());
+    mLightEnabledLoc[i] = glGetUniformLocation(program, enabled.ToCString());
+    mLightPosLoc[i] = glGetUniformLocation(program, pos.ToCString());
+    mLightColorLoc[i] = glGetUniformLocation(program, color.ToCString());
+    mLightAttLoc[i] = glGetUniformLocation(program, att.ToCString());
 	}
-	mVDiffuseLoc = glGetAttribLocation(program, "diffuse");
-	mVAmbientLoc = glGetAttribLocation(program, "ambient");
-	mShininessLoc = glGetAttribLocation(program, "shininess");
+  mVDiffuseLoc = glGetUniformLocation(program, "diffuse");
+  mVAmbientLoc = glGetUniformLocation(program, "ambient");
+  mShininessLoc = glGetUniformLocation(program, "shininess");
+  mEnabledTextureLoc = glGetUniformLocation(program, "textEnabled");
 }
 
 void Renderer::SetDiffuse(const glm::vec3& color) 

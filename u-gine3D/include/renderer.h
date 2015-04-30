@@ -68,7 +68,8 @@ private:
 	int mLightAttLoc[MAX_LIGHTS];
 	int mVDiffuseLoc;
 	int mVAmbientLoc;
-	int mShininessLoc;
+  int mShininessLoc;
+  int mEnabledTextureLoc;
 
 	uint32 mDefaultProgram;
 	String mProgramError;
