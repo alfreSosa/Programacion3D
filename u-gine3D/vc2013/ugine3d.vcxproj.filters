@@ -121,5 +121,11 @@
     <None Include="..\data\vertex.glsl">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\data\depth_fragment.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\data\depth_vertex.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

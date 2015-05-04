@@ -8,6 +8,7 @@ Ptr<Renderer> Renderer::mInstance = nullptr;
 
 Renderer::Renderer() {
   mDefaultProgram = CreateProgram("data/vertex.glsl", "data/fragment.glsl");
+  mDepthProgram = CreateProgram("data/depth_vertex.glsl", "data/depth_fragment.glsl");
   UseProgram(mDefaultProgram);
 }
 
@@ -18,7 +19,7 @@ void Renderer::Setup3D() {
 	glDepthFunc(GL_LEQUAL);
 }
 
-void Renderer::SetMatrices(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection) {
+void Renderer::SetMatrices(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection, const glm::mat4& depthBias) {
   mat4 mvp = projection * view * model;
   mat4 mv = view * model;
   mat4 normal = glm::transpose(glm::inverse(mv));
@@ -26,6 +27,7 @@ void Renderer::SetMatrices(const glm::mat4& model, const glm::mat4& view, const 
   glUniformMatrix4fv(mMVPLoc, 1, false, glm::value_ptr(mvp));
   glUniformMatrix4fv(mMVLoc, 1, false, glm::value_ptr(mv));
   glUniformMatrix4fv(mNormalMatrixLoc, 1, false, glm::value_ptr(normal));
+  glUniformMatrix4fv(mDepthBiasLoc, 1, false, glm::value_ptr(depthBias));
 }
 
 void Renderer::SetViewport(int x, int y, int w, int h) {
@@ -40,6 +42,26 @@ void Renderer::ClearColorBuffer(const glm::vec3& color) {
 
 void Renderer::ClearDepthBuffer() {
 	glClear(GL_DEPTH_BUFFER_BIT);
+}
+
+uint32 Renderer::CreateTexture(uint32 width, uint32 height, bool isDepth) {
+
+  // Create GL texture
+  GLuint handle;
+  glGenTextures(1, &handle);
+  glBindTexture(GL_TEXTURE_2D, handle);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  if (!isDepth)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+  else
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, nullptr);
+
+  glBindTexture(GL_TEXTURE_2D, 0);
+
+  return handle;
 }
 
 uint32 Renderer::LoadTexture(const String& filename, uint32& width, uint32& height) {
@@ -125,6 +147,38 @@ void Renderer::DrawBuffers(uint32 vertexBuffer, uint32 indexBuffer, uint32 numIn
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
+uint32 Renderer::CreateFrameBuffer(uint32 colortex, uint32 depthtex) {
+  uint32 buffer;
+  glGenFramebuffers(1, &buffer);
+  BindFrameBuffer(buffer);
+  glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, colortex, 0);
+  glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthtex, 0);
+  
+  if (colortex)
+    glDrawBuffer(GL_NONE);
+
+  return buffer;
+}
+
+void Renderer::FreeFrameBuffer(uint32 handle) {
+  glDeleteFramebuffers(1, &handle);
+}
+
+void Renderer::BindFrameBuffer(uint32 handle) {
+  glBindFramebuffer(GL_FRAMEBUFFER, handle);
+}
+
+void Renderer::SetDepthTexture(uint32 tex) {
+  glActiveTexture(GL_TEXTURE0 + 16);
+  glBindTexture(GL_TEXTURE_2D, tex);
+  glActiveTexture(GL_TEXTURE0);
+}
+
+void Renderer::EnableShadows(bool enable) {
+  glUniform1i(mEnabledShadowsLoc, enable);
+}
+
+
 uint32 Renderer::CreateProgram(const String& vertex, const String& fragment) {
   //leo ficheros
   String vertexCode = String::Read(vertex);
@@ -187,8 +241,10 @@ void Renderer::UseProgram(uint32 program) {
 
 	mMVPLoc = glGetUniformLocation(program, "MVP");
 	mMVLoc = glGetUniformLocation(program, "modelView"); //nombre de las variables en el shader  comprobar
-	mNormalMatrixLoc = glGetUniformLocation(program, "normalMatrix");
-	mTexSamplerLoc = glGetUniformLocation(program, "texSampler");
+  mNormalMatrixLoc = glGetUniformLocation(program, "normalMatrix");
+  mDepthBiasLoc = glGetUniformLocation(program, "depthBias");
+  mTexSamplerLoc = glGetUniformLocation(program, "texSampler");
+  mDepthSamplerLoc = glGetUniformLocation(program, "depthSampler");
 	glUniform1i(mTexSamplerLoc, 0);
 	mVPosLoc = glGetAttribLocation(program, "vpos");
 	mVTexLoc = glGetAttribLocation(program, "vtex");
@@ -209,6 +265,7 @@ void Renderer::UseProgram(uint32 program) {
   mVAmbientLoc = glGetUniformLocation(program, "ambient");
   mShininessLoc = glGetUniformLocation(program, "shininess");
   mEnabledTextureLoc = glGetUniformLocation(program, "textEnabled");
+  mEnabledShadowsLoc = glGetUniformLocation(program, "shadowsEnabled");
 }
 
 void Renderer::SetDiffuse(const glm::vec3& color) 

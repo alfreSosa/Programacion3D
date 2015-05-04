@@ -20,6 +20,11 @@ void Camera::Prepare()
     mViewMatrix = glm::lookAt(GetPosition(), GetPosition() + GetRotation() * vec3(0,0,-1), glm::vec3(0, 1, 0));
   }
 
+  if (mRenderTarget != nullptr) 
+    RENDER->BindFrameBuffer(mRenderTarget->GetFrameBuffer());
+  else
+    RENDER->BindFrameBuffer(0);
+
   RENDER->SetViewport(mVX, mVY, mVW, mVH);
   RENDER->ClearColorBuffer(mColor);
   RENDER->ClearDepthBuffer();

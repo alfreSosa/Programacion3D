@@ -14,7 +14,7 @@ public:
 
 	// Setup
 	void Setup3D();
-	void SetMatrices(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection);
+  void SetMatrices(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection, const glm::mat4& depthBias);
 	void SetViewport(int x, int y, int w, int h);
 
 	// Drawing
@@ -22,6 +22,7 @@ public:
 	void ClearDepthBuffer();
 
 	// Texture
+  uint32 CreateTexture(uint32 width, uint32 height, bool isDepth);
 	uint32 LoadTexture(const String& filename, uint32& width, uint32& height);
 	void FreeTexture(uint32 tex);
 	void SetTexture(uint32 tex);
@@ -32,9 +33,15 @@ public:
 	void SetVertexBufferData(uint32 vertexBuffer, const void* data, uint32 dataSize);
 	void SetIndexBufferData(uint32 indexBuffer, const void* data, uint32 dataSize);
 	void DrawBuffers(uint32 vertexBuffer, uint32 indexBuffer, uint32 numIndices);
+  
+  //FrameBuffer
+  uint32 CreateFrameBuffer(uint32 colortex, uint32 depthtex);
+  void FreeFrameBuffer(uint32 handle);
+  void BindFrameBuffer(uint32 handle);
 
 	// Shaders
 	uint32 CreateProgram(const String& vertex, const String& fragment);
+  uint32 GetDepthProgram() { return mDepthProgram; }
 	void FreeProgram(uint32 program);
 	void UseProgram(uint32 program);
 	const String& GetProgramError();
@@ -44,11 +51,13 @@ public:
 	void SetAmbient(const glm::vec3& color);
 	void SetShininess(uint8 shininess);
 
-  //Averiguar si guardar un array fijo de luces
 	void EnableLighting(bool enable);
 	void EnableLight(uint32 index, bool enabled);
 	void SetLightData(uint32 index, const glm::vec4& vector, const glm::vec3& color, float attenuation);
 
+  //Shadows
+  void SetDepthTexture(uint32 tex);
+  void EnableShadows(bool enable);
 protected:
 	Renderer();
 	virtual ~Renderer() {}
@@ -60,6 +69,7 @@ private:
 	int mTexSamplerLoc;
 	int mVPosLoc;
 	int mVTexLoc;
+  //Light
 	int mVNormalLoc;
 	int mLightingEnabledLoc;
 	int mLightEnabledLoc[MAX_LIGHTS];
@@ -70,8 +80,13 @@ private:
 	int mVAmbientLoc;
   int mShininessLoc;
   int mEnabledTextureLoc;
+  //Shadows
+  int mDepthSamplerLoc;
+  int mDepthBiasLoc;
+  int mEnabledShadowsLoc;
 
-	uint32 mDefaultProgram;
+  uint32 mDefaultProgram;
+  uint32 mDepthProgram;
 	String mProgramError;
 friend class Ptr<Renderer>;
 friend class Ptr<const Renderer>;

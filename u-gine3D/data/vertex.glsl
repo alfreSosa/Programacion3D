@@ -9,13 +9,16 @@ uniform float lightAtt[MAX_LIGHTS];
 uniform vec3 diffuse;
 uniform vec3 ambient;
 uniform int shininess;
-
 uniform mat4 MVP;
+uniform mat4 depthBias;
+
+
 attribute vec3 vpos;
 attribute vec2 vtex;
 attribute vec3 vnormal;
 varying vec2 ftex;
 varying vec3 fcolor;
+varying vec3 depthCoord;
 
 void main() 
 {
@@ -56,4 +59,5 @@ void main()
 	}
 	gl_Position = MVP * vec4(vpos, 1);
 	ftex = vtex;
+	depthCoord = vec3(depthBias * vec4(vpos, 1));
 }

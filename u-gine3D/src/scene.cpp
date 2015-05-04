@@ -1,11 +1,28 @@
 #include "../include/scene.h"
 #include "../include/renderer.h"
+#include "../include/texture.h"
 
 Ptr<Scene> Scene::mInstance = nullptr;
 
 Scene::Scene()
 {
   RENDER->Setup3D();
+  mDepthCamera = Camera::Create();
+  mDepthCamera->SetUsesTarget(true);
+  Ptr<Texture> tex = Texture::Create(1024, 1024, Texture::DEPTHBUFFER | Texture::COLORBUFFER);
+  mDepthCamera->SetViewport(0, 0, 1024, 1024);
+  mDepthCamera->SetRenderTarget(tex);
+  mDepthFar = 0;
+  mEnableShadows = false;
+}
+
+void Scene::SetDepthOrtho(float left, float right, float bottom, float top, float near, float far) {
+  mDepthCamera->SetProjection(glm::ortho(left, right, bottom, top, near, far));
+  mDepthFar = far / 2;
+}
+
+void Scene::EnableShadows(bool enable) {
+  mEnableShadows = enable;
 }
 
 void Scene::AddEntity(Ptr<Entity> entity)
@@ -44,7 +61,7 @@ void Scene::Update(float elapsed)
 void Scene::SetModel(const mat4& m)
 {
   mModelMatrix = m;
-  RENDER->SetMatrices(mModelMatrix, mCurrentCamera->GetView(), mCurrentCamera->GetProjection());
+  RENDER->SetMatrices(mModelMatrix, mCurrentCamera->GetView(), mCurrentCamera->GetProjection(), mDepthBias);
 }
 
 void Scene::Render()
@@ -52,6 +69,33 @@ void Scene::Render()
   uint32 camLength = mCameras.Size();
   uint32 lightLength = mLights.Size();
   uint32 length = mEntities.Size();
+  if (mEnableShadows) {
+    Ptr<Light> fDir = nullptr;
+    bool found = false;
+    for (uint32 j = 0; j < lightLength && !found; j++)
+      if (mLights[j]->GetType() == Light::DIRECTIONAL) {
+        fDir = mLights[j];
+        found = true;
+      }
+    if (fDir != nullptr) {
+      mCurrentCamera = mDepthCamera;
+      RENDER->UseProgram(RENDER->GetDepthProgram());
+      vec3 NcamPos = glm::normalize(fDir->GetPosition());
+      vec3 posCam = NcamPos * mDepthFar;
+      mDepthCamera->GetPosition() = posCam;
+      mDepthCamera->GetTarget() = -posCam;
+      mDepthCamera->Prepare();
+      mat4 scale = { 0.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0.5, 0, 0.5, 0.5, 0.5, 1 };
+      mDepthBias = scale * mDepthCamera->GetProjection() * mDepthCamera->GetView();
+      for (uint32 j = 0; j < length; j++)
+        mEntities[j]->Render();
+
+      RENDER->UseProgram(0);
+      RENDER->SetDepthTexture(mDepthCamera->GetRenderTarget()->GetDepthHandle());
+    }
+  }
+
+  RENDER->EnableShadows(mEnableShadows);
 
   if (lightLength > 0)
 	  RENDER->EnableLighting(true);

@@ -45,6 +45,8 @@
     <ClCompile Include="..\src\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\data\depth_fragment.glsl" />
+    <None Include="..\data\depth_vertex.glsl" />
     <None Include="..\data\fragment.glsl" />
     <None Include="..\data\vertex.glsl" />
   </ItemGroup>

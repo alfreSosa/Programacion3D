@@ -2,6 +2,7 @@
 #define UGINE_CAMERA_H
 
 #include "entity.h"
+#include "texture.h"
 
 class Camera : public Entity {
 public:
@@ -27,6 +28,9 @@ public:
   const vec3& GetTarget() const { return mTarget; }
   vec3& GetTarget() { return mTarget; }
 
+  const Ptr<Texture>& GetRenderTarget() { return mRenderTarget; }
+  void SetRenderTarget(const Ptr<Texture>& tex) { mRenderTarget = tex; }
+
 	void Prepare();
   virtual void Render() { }
 protected:
@@ -40,6 +44,9 @@ private:
 	vec3 mColor;
 	bool mUsesTarget;
 	vec3 mTarget;
+  //Shadows
+  Ptr<Texture> mRenderTarget;
+
 friend class Ptr<Camera>;
 friend class Ptr<const Camera>;
 };

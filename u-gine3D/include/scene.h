@@ -23,6 +23,9 @@ public:
   void SetAmbient(const glm::vec3& ambient);
   void Update(float elapsed);
   void Render();
+  //Shadows
+  void SetDepthOrtho(float left, float right, float bottom, float top, float near, float far);
+  void EnableShadows(bool enable);
 protected:
 	Scene();
 	~Scene() {}
@@ -33,6 +36,12 @@ private:
 	Array<Ptr<Camera>> mCameras;
 	Array<Ptr<Entity>> mEntities;
 	Array<Ptr<Light>> mLights;
+  //Shadows
+  Ptr<Camera> mDepthCamera;
+  glm::mat4 mDepthBias;
+  float mDepthFar;
+  bool mEnableShadows;
+
 friend class Ptr<Scene>;
 friend class Ptr<const Scene>;
 };
