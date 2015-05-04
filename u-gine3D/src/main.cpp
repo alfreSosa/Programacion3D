@@ -126,7 +126,6 @@ void Practica3()
   Ptr<Light> directionalLight = Light::Create();
   directionalLight->SetColor(vec3(1, 1, 1));
   directionalLight->SetType(Light::DIRECTIONAL);
-  //directionalLight->GetPosition() = vec3(1, 1, 1);
   Scene::Instance()->AddEntity(directionalLight.UpCast<Entity>());
   Scene::Instance()->EnableShadows(true);
   Scene::Instance()->SetDepthOrtho(-10, 10, -10, 10, 1, 100);

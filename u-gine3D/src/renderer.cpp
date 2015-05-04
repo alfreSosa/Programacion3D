@@ -151,10 +151,14 @@ uint32 Renderer::CreateFrameBuffer(uint32 colortex, uint32 depthtex) {
   uint32 buffer;
   glGenFramebuffers(1, &buffer);
   BindFrameBuffer(buffer);
-  glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, colortex, 0);
-  glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthtex, 0);
   
   if (colortex)
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, colortex, 0);
+
+  if (depthtex)
+  glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthtex, 0);
+  
+  if (colortex == 0)
     glDrawBuffer(GL_NONE);
 
   return buffer;
@@ -169,7 +173,7 @@ void Renderer::BindFrameBuffer(uint32 handle) {
 }
 
 void Renderer::SetDepthTexture(uint32 tex) {
-  glActiveTexture(GL_TEXTURE0 + 16);
+  glActiveTexture(GL_TEXTURE0 + 15);
   glBindTexture(GL_TEXTURE_2D, tex);
   glActiveTexture(GL_TEXTURE0);
 }
@@ -245,7 +249,8 @@ void Renderer::UseProgram(uint32 program) {
   mDepthBiasLoc = glGetUniformLocation(program, "depthBias");
   mTexSamplerLoc = glGetUniformLocation(program, "texSampler");
   mDepthSamplerLoc = glGetUniformLocation(program, "depthSampler");
-	glUniform1i(mTexSamplerLoc, 0);
+  glUniform1i(mTexSamplerLoc, 0);
+  glUniform1i(mDepthSamplerLoc, 15);
 	mVPosLoc = glGetAttribLocation(program, "vpos");
 	mVTexLoc = glGetAttribLocation(program, "vtex");
 	mVNormalLoc = glGetAttribLocation(program, "vnormal");

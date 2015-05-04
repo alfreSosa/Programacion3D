@@ -9,16 +9,17 @@ Scene::Scene()
   RENDER->Setup3D();
   mDepthCamera = Camera::Create();
   mDepthCamera->SetUsesTarget(true);
-  Ptr<Texture> tex = Texture::Create(1024, 1024, Texture::DEPTHBUFFER | Texture::COLORBUFFER);
+  Ptr<Texture> tex = Texture::Create(1024, 1024, Texture::DEPTHBUFFER);
   mDepthCamera->SetViewport(0, 0, 1024, 1024);
   mDepthCamera->SetRenderTarget(tex);
   mDepthFar = 0;
   mEnableShadows = false;
 }
 
+
 void Scene::SetDepthOrtho(float left, float right, float bottom, float top, float near, float far) {
   mDepthCamera->SetProjection(glm::ortho(left, right, bottom, top, near, far));
-  mDepthFar = far / 2;
+  mDepthFar = far * 0.5f;
 }
 
 void Scene::EnableShadows(bool enable) {
@@ -69,6 +70,7 @@ void Scene::Render()
   uint32 camLength = mCameras.Size();
   uint32 lightLength = mLights.Size();
   uint32 length = mEntities.Size();
+
   if (mEnableShadows) {
     Ptr<Light> fDir = nullptr;
     bool found = false;
@@ -85,7 +87,7 @@ void Scene::Render()
       mDepthCamera->GetPosition() = posCam;
       mDepthCamera->GetTarget() = -posCam;
       mDepthCamera->Prepare();
-      mat4 scale = { 0.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0.5, 0, 0.5, 0.5, 0.5, 1 };
+      mat4 scale = glm::scale(glm::translate(glm::mat4(), vec3(0.5)), vec3(0.5));
       mDepthBias = scale * mDepthCamera->GetProjection() * mDepthCamera->GetView();
       for (uint32 j = 0; j < length; j++)
         mEntities[j]->Render();
