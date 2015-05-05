@@ -11,7 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\animseq.h" />
     <ClInclude Include="..\include\array.h" />
+    <ClInclude Include="..\include\bone.h" />
     <ClInclude Include="..\include\camera.h" />
     <ClInclude Include="..\include\entity.h" />
     <ClInclude Include="..\include\light.h" />
@@ -31,6 +33,7 @@
     <ClInclude Include="..\lib\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\bone.cpp" />
     <ClCompile Include="..\src\camera.cpp" />
     <ClCompile Include="..\src\entity.cpp" />
     <ClCompile Include="..\src\light.cpp" />

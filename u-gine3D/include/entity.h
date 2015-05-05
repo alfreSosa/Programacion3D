@@ -16,7 +16,7 @@ public:
   const vec3& GetScale() const { return mScale; }
   vec3& GetScale() { return mScale; }
 
-  void Move(const vec3& speed) { mPosition += mRotation * speed; } //Revisar
+  void Move(const vec3& speed) { mPosition += mRotation * speed; }
 
 	virtual void Update(float elapsed) {}
 	virtual void Render();

@@ -104,6 +104,105 @@ Ptr<Mesh> Mesh::Create(const String& filename)
     }
   }
   mesh->mFilename = filename;
+
+  if (document.HasMember("sequences"))
+    if (document["sequences"].IsArray()) {
+      SizeType size = document["sequences"].Size();
+      const Value& sequences = document["sequences"];
+      for (SizeType i = 0; i < size; i++)
+      {
+        String name = "";
+        int first = 0;
+        int last = 0;
+        if (sequences[i].IsObject())
+        {
+          if (sequences[i].HasMember("name"))
+             name = submeshes[i]["name"].GetString();
+          if (sequences[i].HasMember("first_frame"))
+            first = submeshes[i]["first_frame"].GetUint();
+          if (sequences[i].HasMember("last_frame"))
+            last = submeshes[i]["last_frame"].GetUint();
+          AnimSeq seq(name, first, last);
+          mesh->AddSequence(seq);
+        }
+      }
+    }
+
+  if (document.HasMember("bones"))
+    if (document["bones"].IsArray()) 
+    {
+      SizeType size = document["bones"].Size();
+      const Value& bones = document["bones"];
+      for (SizeType i = 0; i < size; i++)
+      {
+        String name = "";
+        String parent = "";
+        mat4 transform = glm::mat4();
+        Array<uint32> submeshes;
+        if (bones[i].IsObject())
+        {
+          if (bones[i].HasMember("name"))
+            name = bones[i]["name"].GetString();
+          if (bones[i].HasMember("parent"))
+            parent = bones[i]["parent"].GetString();
+          if (bones[i].HasMember("transform")) {
+            SizeType transSize = bones[i]["transform"].Size();
+            for (uint32 j = 0; j < transSize; j++)
+              glm::value_ptr(transform)[j] = bones[i]["transform"][j].GetDouble();
+          }
+          if (bones[i].HasMember("submeshes")) {
+            SizeType subSize = bones[i]["submeshes"].Size();
+            for (uint32 j = 0; j < subSize; j++)
+              submeshes.Add(bones[i]["submeshes"][j].GetUint());
+          
+          }
+          Ptr<Bone> bone = Bone::Create(name, transform, submeshes);
+          if (bones[i].HasMember("positions")) {
+            SizeType posSize = bones[i]["positions"].Size();
+            for (uint32 j = 0; j < posSize; j+=4) {
+              vec3 position(0, 0, 0);
+              uint32 keyFrame = bones[i]["positions"][j].GetUint();
+              position.x = bones[i]["positions"][j + 1].GetDouble();
+              position.y = bones[i]["positions"][j + 2].GetDouble();
+              position.z = bones[i]["positions"][j + 3].GetDouble();
+              bone->AddPosition(keyFrame, position);
+            }
+          }
+
+          if (bones[i].HasMember("rotations")) {
+            SizeType rotSize = bones[i]["rotations"].Size();
+            for (uint32 j = 0; j < rotSize; j += 5) {
+              quat rotation(1, 0, 0, 0);
+              uint32 keyFrame = bones[i]["rotations"][j].GetUint();
+              rotation.w = bones[i]["rotations"][j + 1].GetDouble();
+              rotation.x = bones[i]["rotations"][j + 2].GetDouble();
+              rotation.y = bones[i]["rotations"][j + 3].GetDouble();
+              rotation.z = bones[i]["rotations"][j + 3].GetDouble();
+              bone->AddRotation(keyFrame, rotation);
+            }
+          }
+
+          if (bones[i].HasMember("scales")) {
+            SizeType scaSize = bones[i]["scales"].Size();
+            for (uint32 j = 0; j < scaSize; j += 4) {
+              vec3 scale(1, 1, 1);
+              uint32 keyFrame = bones[i]["scales"][j].GetUint();
+              scale.x = bones[i]["scales"][j + 1].GetDouble();
+              scale.y = bones[i]["scales"][j + 2].GetDouble();
+              scale.z = bones[i]["scales"][j + 3].GetDouble();
+              bone->AddScale(keyFrame, scale);
+            }
+          }
+          if (parent != "")
+            mesh->SetRootBone(bone);
+          else {
+            Ptr<Bone> p = mesh->GetRootBone()->Find(parent);
+            if (p != nullptr)
+              p->AddChild(bone);
+          }
+        }
+      }
+    }
   return mesh;
 }
 
