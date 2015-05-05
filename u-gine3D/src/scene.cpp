@@ -14,6 +14,8 @@ Scene::Scene()
   mDepthCamera->SetRenderTarget(tex);
   mDepthFar = 0;
   mEnableShadows = false;
+  mScale = { 0.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0.5, 0, 0.5, 0.5, 0.5, 1 };
+
 }
 
 
@@ -36,7 +38,7 @@ void Scene::AddEntity(Ptr<Entity> entity)
 
   Ptr<Light> light = entity.DownCast<Light>();
   if (light != nullptr)
-	  mLights.Add(light);;
+	  mLights.Add(light);
 }
 
 void Scene::RemoveEntity(Ptr<Entity> entity)
@@ -87,8 +89,7 @@ void Scene::Render()
       mDepthCamera->GetPosition() = posCam;
       mDepthCamera->GetTarget() = -posCam;
       mDepthCamera->Prepare();
-      mat4 scale = glm::scale(glm::translate(glm::mat4(), vec3(0.5)), vec3(0.5));
-      mDepthBias = scale * mDepthCamera->GetProjection() * mDepthCamera->GetView();
+      mDepthBias = mScale * mDepthCamera->GetProjection() * mDepthCamera->GetView();
       for (uint32 j = 0; j < length; j++)
         mEntities[j]->Render();
 

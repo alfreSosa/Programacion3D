@@ -39,6 +39,7 @@ private:
   //Shadows
   Ptr<Camera> mDepthCamera;
   glm::mat4 mDepthBias;
+  glm::mat4 mScale;
   float mDepthFar;
   bool mEnableShadows;
 
