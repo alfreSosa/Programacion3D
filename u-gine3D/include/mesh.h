@@ -20,7 +20,7 @@ public:
   uint32 NumSubmeshes() const { return mSubmeshes.Size(); }
   Ptr<const Submesh> GetSubmesh(uint32 i) const { return mSubmeshes[i].ConstCast(); }
   Ptr<Submesh> GetSubmesh(uint32 i) { return mSubmeshes[i]; }
-	void Render();
+	void Render(bool animated);
 
   //Animation
   const Ptr<Bone>& GetRootBone() { return mRootBone; }
@@ -28,7 +28,7 @@ public:
   void SetRootBone(const Ptr<Bone>& bone) { mRootBone = bone; }
   void AddSequence(const AnimSeq& seq) { mSequences.Add(seq); }
   uint32 NumSequences() const { return mSequences.Size(); }
-  uint32 GetSequenceNamed(const String& name) const;
+  int32 GetSequenceNamed(const String& name) const;
   uint32 GetSequenceFirstFrame(uint32 seq) const { return mSequences[seq].GetFirstFrame(); }
   uint32 GetSequenceLastFrame(uint32 seq) const { return mSequences[seq].GetLastFrame(); }
   uint32 GetSequenceNumFrames(uint32 seq) const { return mSequences[seq].GetNumFrames(); }

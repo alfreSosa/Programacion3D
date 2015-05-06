@@ -154,32 +154,22 @@ void Practica4()
 
   Scene::Instance()->SetAmbient(vec3(0.2, 0.2, 0.2));
 
-  double angle = 0;
-  Ptr<Mesh> room = ResourceManager::Instance()->LoadMesh("data/swat.msh");
-  Ptr<Model> sala = Model::Create(room);
-  sala->GetPosition() = vec3(0, 0, 0);
-  Scene::Instance()->AddEntity(sala.UpCast<Entity>());
+  Ptr<Mesh> mesh = ResourceManager::Instance()->LoadMesh("data/swat.msh");
+  Ptr<Model> model = Model::Create(mesh);
+  model->GetPosition() = vec3(0, 0, 0);
+  model->Animate(true, mesh->GetSequenceNamed("3DSMasterAnim"));
+  model->SetFPS(25);
+  Scene::Instance()->AddEntity(model.UpCast<Entity>());
 
   Ptr<Camera> mainCamera = Camera::Create();
   mainCamera->GetRotation() = quat(glm::radians(vec3(-30.0f, 180.0f, 0.0f)));
-  mainCamera->GetPosition() = vec3(0, 8, -12);
+  mainCamera->GetPosition() = vec3(0, 1, -3);
   mainCamera->SetColor(vec3(1, 1, 1));
   mainCamera->SetProjection(glm::perspective<float>(1.7f, (float)Screen::Instance()->GetWidth() / Screen::Instance()->GetHeight(), 1, 100));
   mainCamera->SetViewport(0, 0, Screen::Instance()->GetWidth(), Screen::Instance()->GetHeight());
   Scene::Instance()->AddEntity(mainCamera.UpCast<Entity>());
 
-  Ptr<Light> directionalLight = Light::Create();
-  directionalLight->SetColor(vec3(1, 1, 1));
-  directionalLight->SetType(Light::DIRECTIONAL);
-  Scene::Instance()->AddEntity(directionalLight.UpCast<Entity>());
-  Scene::Instance()->EnableShadows(true);
-  Scene::Instance()->SetDepthOrtho(-10, 10, -10, 10, 1, 100);
-
   while (!Screen::Instance()->ShouldClose() && !Screen::Instance()->IsKeyPressed(GLFW_KEY_ESCAPE)) {
-    angle += 32.0f * Screen::Instance()->GetElapsed();
-    directionalLight->GetPosition() = vec3(0, 0, 0);
-    directionalLight->GetRotation() = quat(glm::radians(vec3(-30.0f, angle, 0.0f)));
-    directionalLight->Move(vec3(0, 0, 1));
     Scene::Instance()->Update(Screen::Instance()->GetElapsed());
     Scene::Instance()->Render();
 

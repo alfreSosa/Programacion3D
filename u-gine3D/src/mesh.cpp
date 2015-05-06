@@ -1,6 +1,7 @@
 #include "../include/mesh.h"
 #include "../lib/rapidjson/document.h"
 #include "../include/resourcemanager.h"
+#include "../include/scene.h"
 
 using namespace rapidjson;
 
@@ -117,11 +118,11 @@ Ptr<Mesh> Mesh::Create(const String& filename)
         if (sequences[i].IsObject())
         {
           if (sequences[i].HasMember("name"))
-             name = submeshes[i]["name"].GetString();
+            name = sequences[i]["name"].GetString();
           if (sequences[i].HasMember("first_frame"))
-            first = submeshes[i]["first_frame"].GetUint();
+            first = sequences[i]["first_frame"].GetUint();
           if (sequences[i].HasMember("last_frame"))
-            last = submeshes[i]["last_frame"].GetUint();
+            last = sequences[i]["last_frame"].GetUint();
           AnimSeq seq(name, first, last);
           mesh->AddSequence(seq);
         }
@@ -177,7 +178,7 @@ Ptr<Mesh> Mesh::Create(const String& filename)
               rotation.w = bones[i]["rotations"][j + 1].GetDouble();
               rotation.x = bones[i]["rotations"][j + 2].GetDouble();
               rotation.y = bones[i]["rotations"][j + 3].GetDouble();
-              rotation.z = bones[i]["rotations"][j + 3].GetDouble();
+              rotation.z = bones[i]["rotations"][j + 4].GetDouble();
               bone->AddRotation(keyFrame, rotation);
             }
           }
@@ -193,7 +194,7 @@ Ptr<Mesh> Mesh::Create(const String& filename)
               bone->AddScale(keyFrame, scale);
             }
           }
-          if (parent != "")
+          if (parent == "")
             mesh->SetRootBone(bone);
           else {
             Ptr<Bone> p = mesh->GetRootBone()->Find(parent);
@@ -206,9 +207,45 @@ Ptr<Mesh> Mesh::Create(const String& filename)
   return mesh;
 }
 
-void Mesh::Render()
+void Mesh::Render(bool animated)
 {
-  uint32 numSubMeshes = mSubmeshes.Size();
-  for (uint32 i = 0; i < numSubMeshes; i++)
-    mSubmeshes[i]->Render();
+  if (mRootBone != nullptr) {
+    RenderBone(GetRootBone().ConstCast(), animated);
+  }
+  else {
+    uint32 numSubMeshes = mSubmeshes.Size();
+    for (uint32 i = 0; i < numSubMeshes; i++)
+      mSubmeshes[i]->Render();
+  }
+}
+void Mesh::RenderBone(const Ptr<const Bone>& bone, bool animated) {
+  mat4 prevModel = Scene::Instance()->GetModel();
+
+  if (animated)
+    Scene::Instance()->SetModel(prevModel * bone->GetCurrentTransform());
+  else
+    Scene::Instance()->SetModel(prevModel * bone->GetDefaultTransform());
+
+  Array<uint32> submeshes = bone->GetSubmeshes();
+  uint32 submeshSize = submeshes.Size();
+  for (uint32 i = 0; i < submeshSize; i++)
+    mSubmeshes[submeshes[i]]->Render();
+
+  Array<Ptr<Bone>> childrens = bone->GetChildren();
+  uint32 size = childrens.Size();
+  for (uint32 i = 0; i < size; i++)
+    RenderBone(childrens[i].ConstCast(), animated);
+
+  Scene::Instance()->SetModel(prevModel);
+
+}
+
+int32 Mesh::GetSequenceNamed(const String& name) const {
+  uint32 size = mSequences.Size();
+
+  for (uint32 i = 0; i < size; i++)
+    if (mSequences[i].GetName() == name)
+      return i;
+
+  return -1;
 }
