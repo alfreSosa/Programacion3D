@@ -38,12 +38,14 @@ Array<WPtr<Bone>> Model::GetBones(const Ptr<Bone>& bone) {
 
 void Model::Update(float elapsed)
 {
-  mCurrentFrame += mFPS * elapsed;
-  if (mCurrentFrame < mMesh->GetSequenceFirstFrame(mSequence)) {
-    mCurrentFrame += mMesh->GetSequenceNumFrames(mSequence);
-  }
-  else if (mCurrentFrame > mMesh->GetSequenceLastFrame(mSequence)) {
-    mCurrentFrame -= mMesh->GetSequenceNumFrames(mSequence);
+  if (mAnimating) {
+    mCurrentFrame += mFPS * elapsed;
+    if (mCurrentFrame < mMesh->GetSequenceFirstFrame(mSequence)) {
+      mCurrentFrame += mMesh->GetSequenceNumFrames(mSequence);
+    }
+    else if (mCurrentFrame > mMesh->GetSequenceLastFrame(mSequence)) {
+      mCurrentFrame -= mMesh->GetSequenceNumFrames(mSequence);
+    }
   }
 }
 
